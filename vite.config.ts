@@ -14,13 +14,15 @@ import { cssRawMinifyPlugin, htmlRawMinifyPlugin, markdownPlugin } from './scrip
 import { appConfig } from './src/config/app'
 
 const require = createRequire(import.meta.url)
+const isAliyunESA = Boolean(process.env.AliUid)
+const isTencentEdgeOne = process.env.HOME === '/dev/shm/home' && process.env.TMPDIR === '/dev/shm/tmp'
 
 let customPreset: string | undefined
-if (process.env.AliUid) {
+if (isAliyunESA) {
   // 阿里云 ESA
   customPreset = './preset/aliyun-esa/nitro.config.ts'
 }
-else if (process.env.HOME === '/dev/shm/home' && process.env.TMPDIR === '/dev/shm/tmp') {
+else if (isTencentEdgeOne) {
   // 腾讯云 EdgeOne
   customPreset = './preset/tencent-edgeone/nitro.config.ts'
 }
@@ -28,29 +30,34 @@ else if (process.env.HOME === '/dev/shm/home' && process.env.TMPDIR === '/dev/sh
 console.info('Using Nitro Preset:', customPreset || 'auto')
 
 const config = defineConfig({
+  preview: {
+    host: process.env.DOCKERIZED ? true : undefined,
+  },
   plugins: [
     // analyzer(),
     cssRawMinifyPlugin(),
     htmlRawMinifyPlugin(),
     markdownPlugin(),
     devtools(),
-    ...(process.env.NODE_ENV !== 'test'
-      ? [nitro({
-          preset: customPreset,
-          cloudflare: {
-            wrangler: {
-              name,
-              observability: { enabled: true },
-              keep_vars: true,
+    ...(
+      process.env.NODE_ENV !== 'test'
+      && !process.env.DOCKERIZED
+        ? [nitro({
+            preset: customPreset,
+            cloudflare: {
+              wrangler: {
+                name,
+                observability: { enabled: true },
+                keep_vars: true,
+              },
             },
-          },
-          vercel: {
-            functions: {
-              runtime: 'bun1.x',
+            vercel: {
+              functions: {
+                runtime: 'bun1.x',
+              },
             },
-          },
-        })]
-      : []),
+          })]
+        : []),
     // this is the plugin that enables path aliases
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
@@ -58,8 +65,11 @@ const config = defineConfig({
     tailwindcss(),
     tanstackStart({
       prerender: {
-        // enabled: true,
-        filter: ({ path }) => path === '/' || path.startsWith('/docs'),
+        enabled: !isTencentEdgeOne,
+        filter: ({ path }) =>
+          path === '/'
+          || path === '/about'
+          || path.startsWith('/docs'),
       },
     }),
     viteReact({
@@ -115,6 +125,11 @@ const config = defineConfig({
   },
   worker: {
     format: 'es',
+    plugins: () => [
+      viteTsConfigPaths({
+        projects: ['./tsconfig.json'],
+      }),
+    ],
   },
 })
 
