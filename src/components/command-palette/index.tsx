@@ -38,9 +38,11 @@ import {
   copyPlatform,
   exportImage,
   exportMarkdown,
+  exportPdf,
   formatMarkdown,
   getIcon,
   handleImportFiles,
+  printPreview,
   toggleTheme,
 } from '@/lib/actions'
 import { trackEvent } from '@/lib/analytics'
@@ -159,6 +161,18 @@ export function CommandPalette() {
     await copyImage()
   }, [closePanel])
 
+  const handleExportPdf = useCallback(async () => {
+    closePanel()
+    trackEvent('export', 'pdf', 'menu')
+    await exportPdf()
+  }, [closePanel])
+
+  const handlePrintPreview = useCallback(() => {
+    closePanel()
+    trackEvent('export', 'print', 'menu')
+    printPreview()
+  }, [closePanel])
+
   const handleThemeToggle = useCallback(() => {
     trackEvent('theme', 'toggle', 'menu')
     toggleTheme(isDark, setTheme)
@@ -220,6 +234,8 @@ export function CommandPalette() {
     const FormatIcon = getIcon(editorCommandConfig.format.icon)
     const ExportImageIcon = getIcon(editorCommandConfig.exportImage.icon)
     const CopyImageIcon = getIcon(editorCommandConfig.copyImage.icon)
+    const ExportPdfIcon = getIcon(editorCommandConfig.exportPdf.icon)
+    const PrintPreviewIcon = getIcon(editorCommandConfig.printPreview.icon)
     const ThemeIcon = getIcon(isDark ? editorCommandConfig.themeToggle.iconDark : editorCommandConfig.themeToggle.iconLight)
     const MobileIcon = getIcon(viewModeConfig.mobile.icon)
     const DesktopIcon = getIcon(viewModeConfig.desktop.icon)
@@ -292,6 +308,14 @@ export function CommandPalette() {
           <CommandItem onSelect={handleExportImage}>
             {ExportImageIcon && <ExportImageIcon className="size-4" />}
             {editorCommandConfig.exportImage.label}
+          </CommandItem>
+          <CommandItem onSelect={handleExportPdf}>
+            {ExportPdfIcon && <ExportPdfIcon className="size-4" />}
+            {editorCommandConfig.exportPdf.label}
+          </CommandItem>
+          <CommandItem onSelect={handlePrintPreview}>
+            {PrintPreviewIcon && <PrintPreviewIcon className="size-4" />}
+            {editorCommandConfig.printPreview.label}
           </CommandItem>
         </CommandGroup>
 

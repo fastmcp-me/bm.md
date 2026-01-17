@@ -101,6 +101,14 @@ export const editorCommandConfig = {
     label: '复制图片',
     icon: 'ClipboardCopy' as IconName,
   },
+  exportPdf: {
+    label: '导出 PDF',
+    icon: 'FileText' as IconName,
+  },
+  printPreview: {
+    label: '打印预览',
+    icon: 'Printer' as IconName,
+  },
   themeToggle: {
     labelLight: '切换到深色模式',
     labelDark: '切换到浅色模式',

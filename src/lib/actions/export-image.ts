@@ -1,28 +1,7 @@
 import type { CaptureResult } from '@zumer/snapdom'
 import { toast } from 'sonner'
 import { copyImage as copyImageToClipboard } from '@/lib/clipboard'
-
-function getPreviewElement(): HTMLElement | null {
-  try {
-    const iframe = document.querySelector('#bm-preview-iframe') as HTMLIFrameElement | null
-    if (!iframe?.contentDocument?.body) {
-      toast.error('预览区域尚未就绪')
-      return null
-    }
-
-    const previewContent = iframe.contentDocument.getElementById('bm-md')
-    if (!previewContent) {
-      toast.error('没有可操作的内容')
-      return null
-    }
-
-    return previewContent
-  }
-  catch {
-    toast.error('无法访问预览内容')
-    return null
-  }
-}
+import { getPreviewElement } from './preview'
 
 async function createPreviewSnapshot(): Promise<CaptureResult | null> {
   const previewContent = getPreviewElement()

@@ -172,7 +172,7 @@ export default function MarkdownRender() {
       id="bm-preview-iframe"
       title="markdown preview"
       className="h-full w-full border-0"
-      sandbox="allow-same-origin"
+      sandbox="allow-same-origin allow-modals"
       srcDoc={iframeShell}
       onLoad={onIframeLoad}
     />

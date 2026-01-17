@@ -1,17 +1,18 @@
-import { ClipboardCopy, Download, ImageDown } from 'lucide-react'
+import { ClipboardCopy, Download, FileText, ImageDown, Printer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { editorCommandConfig } from '@/config'
-import { copyImage, exportImage } from '@/lib/actions'
+import { copyImage, exportImage, exportPdf, printPreview } from '@/lib/actions'
 import { trackEvent } from '@/lib/analytics'
 
-export function ExportImageButton() {
+export function ExportButton() {
   const onCopyClick = async () => {
     trackEvent('copy', 'image', 'button')
     await copyImage()
@@ -22,6 +23,16 @@ export function ExportImageButton() {
     await exportImage()
   }
 
+  const onExportPdfClick = async () => {
+    trackEvent('export', 'pdf', 'button')
+    await exportPdf()
+  }
+
+  const onPrintClick = () => {
+    trackEvent('export', 'print', 'button')
+    printPreview()
+  }
+
   return (
     <DropdownMenu>
       <Tooltip>
@@ -29,14 +40,14 @@ export function ExportImageButton() {
           render={(
             <DropdownMenuTrigger
               render={(
-                <Button variant="ghost" size="icon" aria-label={editorCommandConfig.exportImage.label}>
-                  <ImageDown className="size-4" />
+                <Button variant="ghost" size="icon" aria-label="导出">
+                  <Download className="size-4" />
                 </Button>
               )}
             />
           )}
         />
-        <TooltipContent>{editorCommandConfig.exportImage.label}</TooltipContent>
+        <TooltipContent>导出</TooltipContent>
       </Tooltip>
       <DropdownMenuContent align="end">
         <DropdownMenuItem className="cursor-pointer" onClick={onCopyClick}>
@@ -44,8 +55,17 @@ export function ExportImageButton() {
           {editorCommandConfig.copyImage.label}
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer" onClick={onExportClick}>
-          <Download className="size-4" />
+          <ImageDown className="size-4" />
           {editorCommandConfig.exportImage.label}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="cursor-pointer" onClick={onExportPdfClick}>
+          <FileText className="size-4" />
+          {editorCommandConfig.exportPdf.label}
+        </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer" onClick={onPrintClick}>
+          <Printer className="size-4" />
+          {editorCommandConfig.printPreview.label}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

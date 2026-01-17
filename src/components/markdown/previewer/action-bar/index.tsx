@@ -3,7 +3,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { CodeThemeMenu } from './code-theme-menu'
 import { CopyButton } from './copy-button'
 import { CustomCssDialog } from './custom-css-dialog'
-import { ExportImageButton } from './export-image-button'
+import { ExportButton } from './export-button'
 import { MarkdownStyleMenu } from './markdown-style-menu'
 
 export function PreviewerActionBar() {
@@ -13,7 +13,7 @@ export function PreviewerActionBar() {
       <CopyButton platform="zhihu" />
       <CopyButton platform="juejin" />
       <CopyButton platform="html" />
-      <ExportImageButton />
+      <ExportButton />
       <Separator orientation="vertical" className="mx-2" />
       <MarkdownStyleMenu />
       <CodeThemeMenu />
